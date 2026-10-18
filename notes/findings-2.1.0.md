@@ -50,3 +50,12 @@ Likely cause: the viewport fit at `0x1FFD58` calculates `height = width / aspect
 **v1.1** makes it use the full render height instead (`0x1FFDD0`-`0x1FFDD8`).
 For narrowing it down, `patches/2.1.0/test/` holds two v1 halves: global aspect
 only, and camera only.
+
+## Eden Android: any exefs patch crashes
+
+The unmodded game launches. The v1.1, test-a and test-b builds crash, and so
+does **test-c, a no-op patch** that writes back the original bytes. So the crash
+comes from Eden loading an exefs patch for this game, not from what the patch
+changes. The Eden Nightly build being used has no CPU backend setting to try.
+Workaround under test: the same changes delivered as an Atmosphère-format cheat
+(`patches/2.1.0/cheats/646761F643AFEBB3.txt`), which writes memory at runtime.
