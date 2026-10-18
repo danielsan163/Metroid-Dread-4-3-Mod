@@ -15,7 +15,9 @@ copy of the game to use or develop this patch.
 
 ## Status
 
-**v1 (experimental)** for game version 2.1.0: `patches/2.1.0/4x3.pchtxt`.
+**v1 (experimental)** for game version 2.1.0: `patches/2.1.0/4x3.pchtxt`, and the
+same patch as IPS: `patches/2.1.0/646761F643AFEBB379EDD5E6A5151AF2CEF93DC1.ips`
+(regenerate it with `scripts/pchtxt_to_ips.py`).
 It renders at the normal resolution with 4:3 proportions, so the emulator has
 to stretch the 16:9 output to 4:3. Findings are in `notes/findings-2.1.0.md`.
 
@@ -25,6 +27,7 @@ to stretch the 16:9 output to 4:3. Findings are in `notes/findings-2.1.0.md`.
    ```
    load/010093801237C000/4x3/exefs/4x3.pchtxt
    ```
+   Or use the `.ips` file in its place. Use one or the other, not both.
    On Android emulators you can also install the `4x3` folder through the game's
    Add-ons / Mods menu.
 2. Enable the `4x3` add-on for the game.
