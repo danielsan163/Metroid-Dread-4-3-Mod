@@ -41,3 +41,12 @@ The aspect and inverse are computed once by the static initializer at
   HUD/menus look right after the emulator stretches the image.
 - `0x1BB3B0` computes an aspect from a render target's width and height
   instead of the global, so whichever camera uses it may still be 16:9.
+
+## v1 crash (Eden Android: game exits to the menu while loading)
+
+Likely cause: the viewport fit at `0x1FFD58` calculates `height = width / aspect`
+(1600 / (4/3) = 1200, larger than the 900-pixel render target) and
+`y = (900 - 1200) >> 1`, which underflows as an unsigned value.
+**v1.1** makes it use the full render height instead (`0x1FFDD0`-`0x1FFDD8`).
+For narrowing it down, `patches/2.1.0/test/` holds two v1 halves: global aspect
+only, and camera only.

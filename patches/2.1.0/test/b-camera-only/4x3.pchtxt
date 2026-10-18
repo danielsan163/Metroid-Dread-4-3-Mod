@@ -1,0 +1,13 @@
+@nsobid-646761F643AFEBB379EDD5E6A5151AF2CEF93DC1
+# Metroid Dread 2.1.0 - 4:3 aspect ratio (test b-camera-only)
+# Renders at the normal 16:9 resolution with 4:3 proportions (anamorphic).
+# Set the emulator's aspect ratio to "Force 4:3" or "Stretch to window".
+
+@flag print_values
+@flag offset_shift 0x100
+
+@enabled
+# Camera FovX -> FovY conversion used a hard-coded 16/9; now 4/3 to match.
+00E94F20 68559552
+00E94F24 48F5A772
+@stop
