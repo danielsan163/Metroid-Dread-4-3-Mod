@@ -1,0 +1,14 @@
+# Never commit game files or keys
+game/
+*.nso
+*.nca
+*.nsp
+*.xci
+*.elf
+main
+prod.keys
+title.keys
+*.keys
+# Ghidra projects
+*.gpr
+*.rep/
