@@ -51,11 +51,28 @@ Likely cause: the viewport fit at `0x1FFD58` calculates `height = width / aspect
 For narrowing it down, `patches/2.1.0/test/` holds two v1 halves: global aspect
 only, and camera only.
 
-## Eden Android: any exefs patch crashes
+## Eden Android: any exefs patch crashes (solved)
 
-The unmodded game launches. The v1.1, test-a and test-b builds crash, and so
-does **test-c, a no-op patch** that writes back the original bytes. So the crash
-comes from Eden loading an exefs patch for this game, not from what the patch
-changes. The Eden Nightly build being used has no CPU backend setting to try.
-Workaround under test: the same changes delivered as an Atmosphère-format cheat
-(`patches/2.1.0/cheats/646761F643AFEBB3.txt`), which writes memory at runtime.
+Not the patch: Android's low-memory killer. `main` has a 1.8 GB bss, and Eden's
+`PatchNSO` copies the whole image to apply an IPS/pchtxt, pushing the process
+past ~5.1 GB. A pre-patched `exefs/main` (`scripts/make_patched_nso.py`) avoids
+it. The cheat route crashed under NCE and was dropped. Details in `status.md`.
+
+## Projection path (in-game results)
+
+- `0x1BB1CC` (reached from `0x2195FC`/`0x219724` -> `0x150D30` -> `0x1D1F54`)
+  sets a camera up for a viewport {x, y, w, h}. Perspective branch: aspect =
+  w/h (`0x1BB3C0`), FovY = `0x217EE0`(FovX, aspect), then
+  `0x79A04`(FovY, aspect, 1, 1e7) builds the matrix
+  (m00 = cot(FovY/2)/aspect, m11 = cot(FovY/2)); `0x15BF00` remaps depth.
+- `0x1BAF78` is the matching unproject (screen to world) using camera `+0x94`.
+- `0xE94EB8`-`0xE94FCC` computes the visible world area (FovX, plus FovY from a
+  hard-coded 16/9) for camera bounds. Reverting the v1.1 change here (v1.3)
+  made no visible difference.
+- `0x1FFD58` viewport fit: both its compare operands are the global aspect, so
+  it always takes the second branch; v1.1's change there yields the full
+  1600x900 viewport.
+- v1.2/v1.3 (global aspect 4/3 + the `0x1BB3C0` change): runs, shapes look
+  about right, but the floor under Samus and the top of the minimap are
+  cropped compared with vanilla. v2.0 keeps all of that at 16:9 and only
+  changes the aspect passed to `0x79A04` (`0x1BB408`, literal at `0x1BD654`).

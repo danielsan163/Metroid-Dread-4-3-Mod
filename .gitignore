@@ -12,3 +12,5 @@ title.keys
 # Ghidra projects
 *.gpr
 *.rep/
+# Python
+__pycache__/

@@ -1,0 +1,41 @@
+@nsobid-646761F643AFEBB379EDD5E6A5151AF2CEF93DC1
+# Metroid Dread 2.1.0 - 4:3 aspect ratio (v1.3, experimental)
+# Renders at the normal 16:9 resolution with 4:3 proportions (anamorphic).
+# Set the emulator's aspect ratio to "Force 4:3" or "Stretch to window".
+
+@flag print_values
+@flag offset_shift 0x100
+
+@enabled
+# Global aspect ratio: was computed as 1600/900 at startup, now fixed at 4/3.
+# 0x132BCC ucvtf s0,s0         -> mov  w9, #0xaaab
+# 0x132BD8 ucvtf s1,s1         -> movk w9, #0x3faa, lsl #16
+# 0x132BDC fdiv  s0,s0,s1      -> fmov s0, w9
+00132BCC 69559552
+00132BD8 49F5A772
+00132BDC 2001271E
+
+# 0xE94F20 (hard-coded 16/9 in the FovX -> FovY conversion) is left alone
+# since v1.3. That code computes the visible world area for camera bounds;
+# setting it to 4/3 made the camera think it saw more vertically than the
+# renderer shows, which cut off the floor and the top of the minimap.
+
+# Viewport fit (0x1FFD58): height = width / aspect gave 1200 > 900 and a
+# negative y offset. Use the full render height, which the anamorphic output needs.
+# 0x1FFDD0 bl GetAspect        -> bl GetHeight (0x132FD0)
+# 0x1FFDD4 fdiv s0,s8,s0       -> nop
+# 0x1FFDD8 fcvtzu w8,s0        -> mov w8, w0
+001FFDD0 80CCFC97
+001FFDD4 1F2003D5
+001FFDD8 E803002A
+
+# Camera setup for a viewport (0x1BB1CC, perspective branch): aspect was
+# viewport w/h (1600/900), which cutscenes use. Force 4/3. x8 is rewritten at
+# 0x1BB3CC before any read, so it is free here.
+# 0x1BB3B4 ucvtf s1,s1         -> mov  w8, #0xaaab
+# 0x1BB3B8 ucvtf s2,s0         -> movk w8, #0x3faa, lsl #16
+# 0x1BB3C0 fdiv  s8,s2,s1      -> fmov s8, w8
+001BB3B4 68559552
+001BB3B8 48F5A772
+001BB3C0 0801271E
+@stop

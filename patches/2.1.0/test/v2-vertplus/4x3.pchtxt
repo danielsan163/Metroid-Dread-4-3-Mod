@@ -1,0 +1,20 @@
+@nsobid-646761F643AFEBB379EDD5E6A5151AF2CEF93DC1
+# Metroid Dread 2.1.0 - 4:3 test variant: render-only Vert+ (v2.0 vert+)
+# Like v2.0, game logic stays 16:9, but the renderer derives FovY from FovX
+# with aspect 4/3: same horizontal view as 16:9, more vertical view. May show
+# areas above/below rooms that the camera logic expects to be off screen.
+
+@flag print_values
+@flag offset_shift 0x100
+
+@enabled
+# Camera setup for a viewport (0x1BB1CC): aspect = 4/3 instead of viewport w/h,
+# used for both the FovX -> FovY conversion and the perspective matrix.
+# x8 is rewritten at 0x1BB3CC before any read, so it is free here.
+# 0x1BB3B4 ucvtf s1,s1         -> mov  w8, #0xaaab
+# 0x1BB3B8 ucvtf s2,s0         -> movk w8, #0x3faa, lsl #16
+# 0x1BB3C0 fdiv  s8,s2,s1      -> fmov s8, w8
+001BB3B4 68559552
+001BB3B8 48F5A772
+001BB3C0 0801271E
+@stop
