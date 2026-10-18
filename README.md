@@ -15,4 +15,5 @@ copy of the game to use or develop this patch.
 
 ## Status
 
-Not started: waiting on analysis of the game executable.
+Targeting version 2.1.0 on a 4:3 handheld via emulator. See `notes/target.md`.
+Waiting on analysis of the game executable.
